@@ -1,0 +1,130 @@
+<!-- ...existing code... -->
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Play - Princess Bird</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background:#f3f6fb; }
+    .center { text-align:center; }
+    #playNowBtn {
+      display:inline-block; padding:14px 28px; background:#ff6b81; color:white; border:none; border-radius:8px;
+      font-size:18px; cursor:pointer; box-shadow:0 4px 10px rgba(0,0,0,0.15);
+    }
+    /* Modal / overlay */
+    .overlay {
+      position:fixed; inset:0; background:rgba(0,0,0,0.6); display:flex; align-items:center; justify-content:center;
+      visibility:hidden; opacity:0; transition:opacity .18s ease, visibility .18s;
+      z-index:9999;
+    }
+    .overlay.show { visibility:visible; opacity:1; }
+    .char-modal {
+      background:#fff; border-radius:12px; padding:18px; max-width:760px; width:95%; box-shadow:0 10px 30px rgba(0,0,0,.25);
+    }
+    .char-grid { display:flex; gap:14px; justify-content:space-around; align-items:center; flex-wrap:wrap; margin-top:12px; }
+    .char-card {
+      cursor:pointer; border-radius:10px; overflow:hidden; text-align:center; width:180px; background:#fafafa;
+      border:2px solid transparent; transition:transform .12s ease, border-color .12s;
+      padding:8px;
+    }
+    .char-card:hover { transform:translateY(-6px); border-color:#ffd1e1; }
+    .char-card.selected { border-color:#ff6b81; box-shadow:0 8px 18px rgba(255,107,129,0.14); }
+    .char-card img { width:100%; height:180px; object-fit:contain; background:linear-gradient(180deg,#fff,#f7f7fb); }
+    .char-name { margin-top:8px; font-weight:600; color:#333; }
+    .modal-footer { display:flex; justify-content:space-between; align-items:center; gap:12px; margin-top:14px; }
+    .btn { padding:10px 14px; border-radius:8px; border:none; cursor:pointer; font-weight:600; }
+    .btn.secondary { background:#eee; color:#333; }
+    .btn.primary { background:#ff6b81; color:#fff; }
+  </style>
+</head>
+<body>
+  <div class="center">
+    <h1>Princess Bird</h1>
+    <p>Choose your princess and start the adventure.</p>
+    <button id="playNowBtn">Play Now</button>
+  </div>
+
+  <!-- Character selection overlay -->
+  <div id="charSelect" class="overlay" aria-hidden="true">
+    <div class="char-modal" role="dialog" aria-modal="true" aria-labelledby="chooseTitle">
+      <h2 id="chooseTitle">Choose Your Princess</h2>
+      <div class="char-grid" id="charGrid">
+        <!-- Replace image src paths below with your actual image filenames/paths if different -->
+        <div class="char-card" data-character="princess1">
+          <img src="../images/princess1.png" alt="Princess 1" />
+          <div class="char-name">Princess 1</div>
+        </div>
+
+        <div class="char-card" data-character="princess2">
+          <img src="../images/princess2.png" alt="Princess 2" />
+          <div class="char-name">Princess 2</div>
+        </div>
+
+        <div class="char-card" data-character="princess3">
+          <img src="../images/princess3.png" alt="Princess 3" />
+          <div class="char-name">Princess 3</div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button id="cancelBtn" class="btn secondary">Cancel</button>
+        <div style="margin-left:auto">
+          <button id="confirmBtn" class="btn primary" disabled>Start Game</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const playNowBtn = document.getElementById('playNowBtn');
+    const overlay = document.getElementById('charSelect');
+    const cards = Array.from(document.querySelectorAll('.char-card'));
+    const confirmBtn = document.getElementById('confirmBtn');
+    const cancelBtn = document.getElementById('cancelBtn');
+
+    let selected = null;
+
+    function openOverlay() {
+      overlay.classList.add('show');
+      overlay.setAttribute('aria-hidden','false');
+    }
+    function closeOverlay() {
+      overlay.classList.remove('show');
+      overlay.setAttribute('aria-hidden','true');
+      clearSelection();
+    }
+    function clearSelection(){
+      selected = null;
+      cards.forEach(c=>c.classList.remove('selected'));
+      confirmBtn.disabled = true;
+    }
+
+    playNowBtn.addEventListener('click', () => openOverlay());
+    cancelBtn.addEventListener('click', () => closeOverlay());
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) closeOverlay();
+    });
+
+    cards.forEach(card => {
+      card.addEventListener('click', () => {
+        cards.forEach(c=>c.classList.remove('selected'));
+        card.classList.add('selected');
+        selected = card.getAttribute('data-character');
+        confirmBtn.disabled = false;
+      });
+    });
+
+    confirmBtn.addEventListener('click', () => {
+      if (!selected) return;
+      // Save choice to localStorage (or pass via query string, or call your game init)
+      localStorage.setItem('selectedPrincess', selected);
+
+      // Example: navigate to the game page. Adjust path as needed.
+      // You could instead call a JS function to start the in-page game using the selected value.
+      window.location.href = './game.html?character=' + encodeURIComponent(selected);
+    });
+  </script>
+</body>
+</html>
+<!-- ...existing code... -->
