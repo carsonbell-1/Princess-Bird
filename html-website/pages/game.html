@@ -11,6 +11,21 @@
       display:inline-block; padding:12px 24px; background:#ff6b81; color:white; border:none; border-radius:8px;
       font-size:16px; cursor:pointer; box-shadow:0 4px 10px rgba(0,0,0,0.12); margin-top:18px;
     }
+    #homeBtn {
+      display:inline-block;
+      padding:12px 24px; /* match restartBtn size */
+      background:#4a90e2; /* blue from playGame.html .home-button */
+      color:white;
+      border:none;
+      border-radius:8px;
+      font-size:16px; /* match restartBtn */
+      cursor:pointer;
+      box-shadow:0 4px 10px rgba(0,0,0,0.12);
+      margin-top:18px;
+      margin-left:8px;
+      transition:background .12s ease, transform .12s ease;
+    }
+    #homeBtn:hover { background:#357abd; transform:translateY(-2px); }
     .score-board {
       margin: 18px auto 0 auto; padding: 16px 24px; background: #fffbe7; border-radius: 10px; width: fit-content;
       font-size: 20px; color: #b47b00; font-weight: bold; box-shadow: 0 2px 8px rgba(0,0,0,0.08);
@@ -28,6 +43,7 @@
       [Game Area]
     </div>
     <button id="restartBtn">Restart</button>
+    <button id="homeBtn">Home</button>
   </div>
   <script>
     // Load and display the highest score from localStorage
@@ -40,6 +56,12 @@
     // Restart button reloads the page (or you can customize to reset game state)
     document.getElementById('restartBtn').addEventListener('click', function() {
       window.location.reload();
+    });
+
+    // Home button navigates back to the home screen (index.html)
+    document.getElementById('homeBtn').addEventListener('click', function() {
+      // Use relative path to the pages index.html in the same folder
+      window.location.href = './index.html';
     });
 
     // Example: update high score (call this when player gets a new score)
