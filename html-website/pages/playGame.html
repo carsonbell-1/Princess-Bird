@@ -127,8 +127,7 @@
       // Save choice to localStorage (or pass via query string, or call your game init)
       localStorage.setItem('selectedPrincess', selected);
 
-      // Example: navigate to the game page. Adjust path as needed.
-      // You could instead call a JS function to start the in-page game using the selected value.
+      // navigate to the game page. Adjust path as needed.
       window.location.href = './game.html?character=' + encodeURIComponent(selected);
     });
   </script>
