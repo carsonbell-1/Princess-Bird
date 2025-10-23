@@ -43,10 +43,27 @@
     .btn { padding:10px 14px; border-radius:8px; border:none; cursor:pointer; font-weight:600; }
     .btn.secondary { background:#eee; color:#333; }
     .btn.primary { background:#ff6b81; color:#fff; }
+    .home-button {
+      padding: 10px 20px;
+      background: #4a90e2;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+      transition: transform 0.2s ease;
+      margin-bottom: 20px;
+    }
+    .home-button:hover {
+      transform: translateY(-2px);
+      background: #357abd;
+    }
   </style>
 </head>
 <body>
   <div class="center">
+    <button class="home-button" onclick="window.location.href='index.html'">Home</button>
     <h1>Princess Bird</h1>
     <p>Choose your princess and start the adventure.</p>
     <button id="playNowBtn">Play Now</button>
