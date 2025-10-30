@@ -74,7 +74,7 @@
     <div class="char-modal" role="dialog" aria-modal="true" aria-labelledby="chooseTitle">
       <h2 id="chooseTitle">Choose Your Princess</h2>
       <div class="char-grid" id="charGrid">
-        <!-- Replace image src paths below with your actual image filenames/paths if different -->
+        <!-- Replace image src paths below with the actual image filenames/paths if different -->
         <div class="char-card" data-character="princess1">
           <img src="../src/images/Princess1.png" alt="Princess 1" />
           <div class="char-name">Princess 1</div>
@@ -144,7 +144,7 @@
       // Save choice to localStorage (or pass via query string, or call your game init)
       localStorage.setItem('selectedPrincess', selected);
 
-      // navigate to the game page. Adjust path as needed.
+      // navigate to the game page.
       window.location.href = './game.html?character=' + encodeURIComponent(selected);
     });
   </script>
