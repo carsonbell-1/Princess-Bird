@@ -1,100 +1,77 @@
-
 <!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Princess Bird — Game</title>
+  <title>Game Play - Princess Bird</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 20px;
-      background: #f3f6fb;
-    }
+    body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background:#f3f6fb; }
     .center { text-align:center; }
-    #restartBtn, #homeBtn {
+    #restartBtn {
+      display:inline-block; padding:12px 24px; background:#ff6b81; color:white; border:none; border-radius:8px;
+      font-size:16px; cursor:pointer; box-shadow:0 4px 10px rgba(0,0,0,0.12); margin-top:18px;
+    }
+    #homeBtn {
       display:inline-block;
-      padding:12px 24px;
+      padding:12px 24px; /* match restartBtn size */
+      background:#4a90e2; /* blue from playGame.html .home-button */
       color:white;
       border:none;
       border-radius:8px;
-      font-size:16px;
+      font-size:16px; /* match restartBtn */
       cursor:pointer;
       box-shadow:0 4px 10px rgba(0,0,0,0.12);
       margin-top:18px;
-    }
-    #restartBtn { background:#ff6b81; }
-    #homeBtn {
-      background:#4a90e2;
       margin-left:8px;
       transition:background .12s ease, transform .12s ease;
     }
     #homeBtn:hover { background:#357abd; transform:translateY(-2px); }
     .score-board {
-      margin: 18px auto 0 auto;
-      padding: 16px 24px;
-      background: #fffbe7;
-      border-radius: 10px;
-      width: fit-content;
-      font-size: 20px;
-      color: #b47b00;
-      font-weight: bold;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    }
-    #gameArea {
-      margin:32px auto;
-      max-width:1300px;
-      max-height:700px;
-      min-width:fit-content;
-      min-height:450px;
-      background:#e3e9f7;
-      border-radius:12px;
-      display:flex;
-      align-items:flex-end;
-      justify-content:center;
-      position:relative;
-      overflow:hidden;
-    }
-    #avatar {
-      width:100px;
-      height:auto;
-      position:absolute;
-      bottom:0;
-      transition:transform 0.2s ease-out;
+      margin: 18px auto 0 auto; padding: 16px 24px; background: #fffbe7; border-radius: 10px; width: fit-content;
+      font-size: 20px; color: #b47b00; font-weight: bold; box-shadow: 0 2px 8px rgba(0,0,0,0.08);
     }
   </style>
 </head>
 <body>
   <div class="center">
-    <h1>Princess Bird — Game</h1>
+    <h1>Princess Bird - Game</h1>
     <div class="score-board">
       Highest Score: <span id="highScore">0</span>
     </div>
-
-    <div id="gameArea">
-      <img id="avatar" alt="Princess Avatar">
+    <!-- Game canvas or content goes here -->
+    <div id="gameArea" style="margin:32px auto; max-width:1300px; max-height:700px; min-width: fit-content; min-height: 450px; background:#e3e9f7; border-radius:12px; display:flex; align-items:center; justify-content:center; color:#888; font-size:22px;">
+      [Game Area]
     </div>
-
     <button id="restartBtn">Restart</button>
     <button id="homeBtn">Home</button>
   </div>
-
-  <!-- Base game UI and navigation logic -->
   <script>
-    // --- SCORE DISPLAY ---
+    // Load and display the highest score from localStorage
     function updateHighScoreDisplay() {
       const high = localStorage.getItem('highScore') || 0;
       document.getElementById('highScore').textContent = high;
     }
     updateHighScoreDisplay();
 
-    // Button handlers
-    document.getElementById('restartBtn').addEventListener('click', () => window.location.reload());
-    document.getElementById('homeBtn').addEventListener('click', () => window.location.href = './index.html');
-  </script>
+    // Restart button reloads the page (or you can customize to reset game state)
+    document.getElementById('restartBtn').addEventListener('click', function() {
+      window.location.reload();
+    });
 
-  <!-- Link the external game logic (jump + character loading) -->
-  <script src="./GameLogic.js"></script>
+    // Home button navigates back to the home screen (index.html)
+    document.getElementById('homeBtn').addEventListener('click', function() {
+      // Use relative path to the pages index.html in the same folder
+      window.location.href = './index.html';
+    });
+
+    // Example: update high score (call this when player gets a new score)
+    // function setNewScore(score) {
+    //   let high = parseInt(localStorage.getItem('highScore') || '0', 10);
+    //   if (score > high) {
+    //     localStorage.setItem('highScore', score);
+    //     updateHighScoreDisplay();
+    //   }
+    // }
+  </script>
 </body>
 </html>
