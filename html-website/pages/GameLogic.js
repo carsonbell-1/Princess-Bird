@@ -6,13 +6,13 @@ const cmToPx = 37.795;
 const jumpIncrement = 0.5 * cmToPx;
 
 // Game variables
-let avatarY = 0; // current bottom position
-let targetY = 0; // desired position after jump
+let avatarY = 0;
+let targetY = 0;
 let isJumping = false;
-let gravity = 2; // pixels per frame the avatar falls
+let gravity = 2;
 let obstacles = [];
 let obstacleSpeed = 4;
-let spawnInterval = 2000; // milliseconds
+let spawnInterval = 2000;
 let gameOver = false;
 let score = 0;
 
@@ -39,7 +39,7 @@ gameArea.appendChild(bg);
 
 let bgX = 0;
 
-// Function to spawn obstacles
+// Function to spawn obstacles at random heights
 function spawnObstacle() {
 if (gameOver) return;
 const obs = document.createElement('div');
@@ -47,13 +47,10 @@ obs.classList.add('obstacle');
 obs.style.position = 'absolute';
 obs.style.width = '50px';
 obs.style.height = '50px';
-
-// Random bottom position (0px to 150px for variety)
 const minBottom = 0;
 const maxBottom = 150;
 const randomBottom = Math.floor(Math.random() * (maxBottom - minBottom + 1)) + minBottom;
 obs.style.bottom = `${randomBottom}px`;
-
 obs.style.right = '0px';
 obs.style.background = "url('../src/images/rock.png')";
 obs.style.backgroundSize = 'cover';
@@ -61,11 +58,11 @@ gameArea.appendChild(obs);
 obstacles.push(obs);
 }
 
-// Smooth jump function
+// Smooth jump animation
 function animateJump() {
 if (!isJumping) return;
 if (avatarY < targetY) {
-avatarY += 5; // pixels per frame
+avatarY += 5;
 if (avatarY > targetY) avatarY = targetY;
 avatar.style.bottom = `${avatarY}px`;
 requestAnimationFrame(animateJump);
@@ -74,7 +71,7 @@ isJumping = false;
 }
 }
 
-// Space bar event to jump
+// Space bar jump
 document.addEventListener('keydown', (e) => {
 if (e.code === 'Space' && !gameOver) {
 e.preventDefault();
@@ -90,7 +87,7 @@ requestAnimationFrame(animateJump);
 function gameLoop() {
 if (gameOver) return;
 
-// Gravity effect
+// Gravity
 if (avatarY > 0 && avatarY > targetY) {
 avatarY -= gravity;
 if (avatarY < 0) avatarY = 0;
@@ -98,7 +95,7 @@ avatar.style.bottom = `${avatarY}px`;
 if (!isJumping) targetY = avatarY;
 }
 
-// Check if avatar fell below screen
+// Fall off screen
 if (avatarY <= 0 && targetY <= 0) {
 endGame();
 }
@@ -156,19 +153,15 @@ function updateScore() {
 scoreBoard.textContent = `Score: ${score}`;
 }
 
-// End game function
+// End game
 function endGame() {
 gameOver = true;
 alert(`Game Over! Your score: ${score}`);
 let high = parseInt(localStorage.getItem('highScore') || '0', 10);
-if (score > high) {
-localStorage.setItem('highScore', score);
-}
+if (score > high) localStorage.setItem('highScore', score);
 window.location.reload();
 }
 
-// Start spawning obstacles
+// Start spawning obstacles and game loop
 setInterval(spawnObstacle, spawnInterval);
-
-// Start game loop
 requestAnimationFrame(gameLoop);
