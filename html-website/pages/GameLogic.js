@@ -1,19 +1,4 @@
-// GameLogic.js
-// Handles princess selection and jump mechanics
-
-document.addEventListener("DOMContentLoaded", () => {
-  // --- LOAD SELECTED CHARACTER ---
-  const avatar = document.getElementById("avatar");
-  const selected = localStorage.getItem("selectedPrincess") || "princess1";
-
-  // Map princess IDs to image paths
-  const imgMap = {
-    princess1: "../src/images/Princess1.png",
-    princess2: "../src/images/Princess2.png",
-    princess3: "../src/images/Princess3.png",
-  };
-
-  // Set avatar image
+// Set avatar image
   avatar.src = imgMap[selected] || imgMap["princess1"];
 
   // --- SPACEBAR JUMP LOGIC ---
@@ -31,4 +16,3 @@ document.addEventListener("DOMContentLoaded", () => {
       event.preventDefault(); // prevents page from scrolling
     }
   });
-});
