@@ -29,9 +29,9 @@
 
   // image file mapping
   const fileMap = {
-    princess1: 'Princess1.png',
-    princess2: 'Princess2.png',
-    princess3: 'Princess3.png'
+    princess1: 'Princess_1_new.png',
+    princess2: 'Princess_2_new.png',
+    princess3: 'Princess_3_new.png'
   };
 
   const candidateFolders = [
