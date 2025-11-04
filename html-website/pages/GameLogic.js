@@ -39,5 +39,5 @@ window.addEventListener('DOMContentLoaded', () => {
   applyBackground(currentIndex);
 
   // 3000 ms = every 30 seconds
-  setInterval(changeBackground, 30000);
+  setInterval(changeBackground, 3000);
 });
