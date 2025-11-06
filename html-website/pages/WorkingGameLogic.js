@@ -236,7 +236,7 @@
         stop();
         // update high score
         if (score > highScore) {
-          highScore = score;
+          highScore = Math.floor(score);
           localStorage.setItem('highScore', highScore);
           const hsEl = document.getElementById('highScore');
           if (hsEl) hsEl.textContent = highScore;
