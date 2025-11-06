@@ -43,6 +43,12 @@
     './assets/images/'
   ];
 
+  // Background toggle settings
+  const pointsPerStage = 20; // change every 20 points
+  const origBgSrc = '../../craftpix-free-seamless-nature-pixel-backgrounds/nature 1/origbig.png';
+  let initialLayerPreset = null; // will store initial layer srcs so we can restore them
+  let lastBgStage = -1; // -1 means uninitialized
+
   // Helper: create canvas inside #gameArea
   function createCanvasIn(areaEl) {
     areaEl.innerHTML = '';
@@ -98,6 +104,8 @@
       try {
         await window.Backgrounds.load(candidateFolders);
         console.info('Backgrounds: loaded layers', window.Backgrounds.layers);
+        // capture the initial layer srcs so we can restore them when toggling
+        initialLayerPreset = window.Backgrounds.layers.map(l => l.src);
       } catch (e) {
         console.warn('Backgrounds: load failed', e);
       }
@@ -239,10 +247,52 @@
 
     // scoring: increment gradually for time survived
     score += 0.01  * delta;
+
+    // check and switch background based on score increments
+    checkBackgroundByScore();
   }
 
   function rectsIntersect(ax, ay, aw, ah, bx, by, bw, bh) {
     return ax < bx + bw && ax + aw > bx && ay < by + bh && ay + ah > by;
+  }
+
+  // Background toggle helper: switch between initial preset and orig.png based on stage
+  function checkBackgroundByScore() {
+    // determine stage: 0 = initial preset, 1 = orig background, alternate every pointsPerStage
+    const stageIndex = Math.floor(score / pointsPerStage) % 2; // 0 or 1
+    if (stageIndex === lastBgStage) return; // no change
+    lastBgStage = stageIndex;
+
+    if (!window.Backgrounds || !Array.isArray(window.Backgrounds.layers)) return;
+
+    if (stageIndex === 1) {
+      // switch to orig.png (replace layers with single orig image)
+      (async () => {
+        const layers = window.Backgrounds.layers;
+        layers.length = 0;
+        layers.push({ src: origBgSrc, speed: 0.15, img: null, offset: 0 });
+        try {
+          await window.Backgrounds.load(candidateFolders);
+          console.info('Backgrounds: switched to orig.png');
+        } catch (e) {
+          console.warn('Backgrounds: failed to load orig.png', e);
+        }
+      })();
+    } else {
+      // restore initial preset layers
+      (async () => {
+        if (!initialLayerPreset) return;
+        const layers = window.Backgrounds.layers;
+        layers.length = 0;
+        for (const s of initialLayerPreset) layers.push({ src: s, speed: 0.15, img: null, offset: 0 });
+        try {
+          await window.Backgrounds.load(candidateFolders);
+          console.info('Backgrounds: restored initial preset');
+        } catch (e) {
+          console.warn('Backgrounds: failed to restore initial preset', e);
+        }
+      })();
+    }
   }
 
     function loop(now) {
