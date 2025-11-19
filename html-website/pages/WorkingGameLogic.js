@@ -27,6 +27,14 @@
   const obstacleWidth = 84;
   const obstacleSpeedBase = 4;
 
+  // crowns (collectibles)
+  let crowns = [];
+  let crownSpawnTimer = 0;
+  let crownImg = null;
+  const crownFile = 'CrownNoBackground.png';
+  const crownW = 38, crownH = 28;
+  let floatingTexts = []; // {x,y,ttl,text}
+
   // image file mapping
   const fileMap = {
     princess1: 'Princess_1_new.png',
@@ -123,6 +131,15 @@
       // charImg stays null and we draw a placeholder
     }
 
+    // load crown image
+    try {
+      const { img: cimg, url: curl } = await loadImageFromCandidates(crownFile, candidateFolders);
+      if (cimg) {
+        crownImg = cimg;
+        console.info('GameLogic: loaded crown image', curl);
+      }
+    } catch (e) { /* ignore */ }
+
     // wire input
     window.addEventListener('keydown', onKeyDown);
     canvas.addEventListener('pointerdown', onPointerDown);
@@ -152,10 +169,7 @@
   function onPointerDown() { jump(); }
 
   function jump() {
-    if (player.onGround) {
       player.vy = player.jumpForce;
-      player.onGround = true;
-    }
   }
 
   // game loop
@@ -174,7 +188,10 @@
   function reset() {
     // reset state
     obstacles = [];
+    crowns = [];
+    floatingTexts = [];
     spawnTimer = 0;
+    crownSpawnTimer = 0;
     score = 0;
     player.vy = 0;
     player.x = 150;
@@ -194,6 +211,21 @@
     const dt = Math.min(40, now - lastTime);
     lastTime = now;
     update(dt / 16.666); // normalise to ~60fps units
+    render();
+  }
+  // main loop (updates background, game, and render)
+  function loop(now) {
+    rafId = requestAnimationFrame(loop);
+    const dt = Math.min(40, now - lastTime);
+    lastTime = now;
+    const delta = dt / 16.666; // normalise to ~60fps units
+
+    // update background (use delta scaled to nicer units)
+    if (window.Backgrounds && typeof window.Backgrounds.update === 'function') {
+      window.Backgrounds.update(delta * 2); // adjust multiplier to taste
+    }
+
+    update(delta);
     render();
   }
 
@@ -229,6 +261,40 @@
       if (obstacles[i].x + obstacles[i].w < -50) obstacles.splice(i, 1);
     }
 
+    // spawn crowns periodically (less frequent than obstacles)
+    crownSpawnTimer -= 1 * delta;
+    const crownInterval = 140 + Math.floor(Math.random() * 160);
+    if (crownSpawnTimer <= 0) {
+      crownSpawnTimer = crownInterval;
+      // spawn crown somewhere above ground but reachable
+      const groundYPos = height - 80;
+      const minY = 40;
+      const maxY = groundYPos - crownH - 40;
+      const y = Math.max(minY, Math.min(maxY, Math.floor(minY + Math.random() * (Math.max(minY, maxY) - minY))));
+      crowns.push({ x: width + 30, y: y, w: crownW, h: crownH });
+    }
+
+    // update crowns movement and check collection
+    for (let i = crowns.length - 1; i >= 0; i--) {
+      const c = crowns[i];
+      c.x -= speed * delta;
+      if (c.x + c.w < -50) { crowns.splice(i, 1); continue; }
+      if (rectsIntersect(player.x, player.y, player.w, player.h, c.x, c.y, c.w, c.h)) {
+        // collected
+        crowns.splice(i, 1);
+        score += 5; // add 5 points
+        floatingTexts.push({ x: c.x + c.w / 2, y: c.y, ttl: 60, text: '+5' });
+      }
+    }
+
+    // update floating texts
+    for (let i = floatingTexts.length - 1; i >= 0; i--) {
+      const ft = floatingTexts[i];
+      ft.y -= 0.3 * delta;
+      ft.ttl -= 1 * delta;
+      if (ft.ttl <= 0) floatingTexts.splice(i, 1);
+    }
+
     // collisions
     for (const o of obstacles) {
       if (rectsIntersect(player.x, player.y, player.w, player.h, o.x, o.y, o.w, o.h)) {
@@ -246,9 +312,9 @@
     }
 
     // scoring: increment gradually for time survived
-    score += 0.01  * delta;
+    score += 0.01 * delta;
 
-    // check and switch background based on score increments
+    // check and switch background based on stage
     checkBackgroundByScore();
   }
 
@@ -309,6 +375,7 @@
     update(delta);
     render();
   }
+  // (loop function is defined above; ensure it exists once)
 
   function render() {
     if (!ctx) return;
@@ -319,13 +386,6 @@
     if (window.Backgrounds && typeof window.Backgrounds.render === 'function') {
       window.Backgrounds.render(ctx, canvas.width, canvas.height);
     }
-
- // background sky (if you still want gradient on top)
-    const g = ctx.createLinearGradient(0, 0, 0, canvas.height);
-    g.addColorStop(0, 'rgba(223,233,252,0.9)');
-    g.addColorStop(1, 'rgba(255,255,255,0.0)');
-    ctx.fillStyle = g;
-    ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
     // ground
     ctx.fillStyle = '#bfe7a1';
@@ -345,6 +405,19 @@
       }
       ctx.fillStyle = '#7b5e3a';
     } 
+
+    // draw crowns
+    for (const c of crowns) {
+        ctx.drawImage(crownImg, c.x, c.y, c.w, c.h);
+    }
+
+    // draw floating collect texts
+    ctx.font = '18px Arial';
+    ctx.textAlign = 'center';
+    for (const ft of floatingTexts) {
+      ctx.fillStyle = 'rgba(0,0,0,0.7)';
+      ctx.fillText(ft.text, Math.round(ft.x), Math.round(ft.y));
+    }
 
     // character
     if (charImg) {
@@ -384,5 +457,4 @@
   } else {
     init();
   }
-
 })();
