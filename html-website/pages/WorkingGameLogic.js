@@ -53,7 +53,7 @@
 
   // Background toggle settings
   const pointsPerStage = 20; // change every 20 points
-  const origBgSrc = '../../craftpix-free-seamless-nature-pixel-backgrounds/nature 1/origbig.png';
+  const origBgSrc = '../../src/images/origbig1.png';
   let initialLayerPreset = null; // will store initial layer srcs so we can restore them
   let lastBgStage = -1; // -1 means uninitialized
 
